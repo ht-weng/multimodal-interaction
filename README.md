@@ -7,3 +7,7 @@
 ```sh
 pip install mediapipe
 ```
+
+## How to get started
+
+First `cd mediapipe/`, then `python face-mesh.py` or `python hands.py`.
