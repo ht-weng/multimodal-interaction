@@ -1,4 +1,4 @@
-# Collection of vision-based sensing tools  
+# Does a fusion of natural interaction technologies effectively improve a GUI?
 
 ## Dependencies
 
