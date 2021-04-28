@@ -22,3 +22,6 @@ python holistic.py
 ```
 
 The output csv files are in the `data/` folder.
+
+## Host the PoC webpage
+Run `python -m http.server` in the `web/` directory and visit `localhost:8000/index.html`
