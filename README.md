@@ -12,7 +12,7 @@ pip install mediapipe
 
 ### Detect face mesh or hand gesture
 
-`cd mediapipe/`, then `python face-mesh.py` or `python hands.py`.
+`cd mediapipe/`, then `python face_mesh.py` or `python hands.py`.
 
 ### Use holistic model to detect and output index fingers' coordinates
 
@@ -22,3 +22,6 @@ python holistic.py
 ```
 
 The output csv files are in the `data/` folder.
+
+## Host the PoC webpage
+Run `python -m http.server` in the `web/` directory and visit `localhost:8000/index.html`
