@@ -30,4 +30,4 @@ Run `python -m http.server` in the `web/` directory and visit `localhost:8000/in
 
 ### Build
 We need the latest version of Xcode.
-Simply use `make` to install all dependencies, build application binary, then archive it in `build/HapticKey.xcarchive/Products/`.
+Simply use `make` in the `HapticKey` directory to install all dependencies, build application binary, then archive it in `build/HapticKey.xcarchive/Products/`.
