@@ -1,0 +1,97 @@
+#!/usr/bin/env bash
+
+exec_with_gems() {
+  # Fail to exit.
+  set -e
+
+  local -r root_dir="$(cd -P "$(dirname "${BASH_SOURCE[0]}")/.." >/dev/null; pwd)"
+
+  # Use system Ruby.
+  local -r ruby_bin_path="/System/Library/Frameworks/Ruby.framework/Versions/Current/usr/bin"
+  if [[ ! -d "$ruby_bin_path" ]]; then
+    echo "No system Ruby $ruby_bin_path found." >&2
+    exit 1
+  fi
+
+  # Use system Rubygems.
+  local -r rubygems="$ruby_bin_path/gem"
+  if [[ ! -e $rubygems ]]; then
+    echo "No system rubygems $rubygems found." >&2
+    exit 1
+  fi
+
+  # Set `GEM_HOME` and `GEM_PATH` to isolate gems.
+  export GEM_HOME="$root_dir/.gems"
+  export GEM_PATH="$GEM_HOME"
+  mkdir -p "$GEM_HOME"
+
+  # Prior to Ruby 2.6, the system Ruby doesn't have Bundler.
+  local bundler="$ruby_bin_path/bundle"
+  if [[ ! -e $bundler ]]; then
+    # Use Bundler installed by Rubygems.
+    bundler="$GEM_HOME/bin/bundle"
+
+    # Use 1.x Bundler instead to support Rubygems 2.x used by the system Ruby.
+    local -r bundler_version="~> 1.17"
+
+    local is_bundler_executable
+    if [[ -e $bundler ]] && "$bundler" help >/dev/null 2>&1; then
+      is_bundler_executable=1
+    fi
+    readonly is_bundler_executable
+
+    local is_bundler_updated
+    if "$rubygems" list --norc -i bundler -v "$bundler_version" > /dev/null 2>&1; then
+      is_bundler_updated=1
+    fi
+    readonly is_bundler_updated
+
+    if ! (( is_bundler_executable )) || ! (( is_bundler_updated )); then
+      echo "No bundler found in $GEM_HOME, install it..."
+
+      # Install or update Bundler.
+      "$rubygems" install \
+        --norc \
+        --no-document \
+        --no-env-shebang \
+        --no-user-install \
+        --clear-sources \
+        --version "$bundler_version" \
+        bundler || {
+        echo "Fail to install bundler." >&2
+        exit 1
+      }
+
+      # Cleanup all previous versions of Bundler.
+      "$rubygems" cleanup bundler
+    fi
+  fi
+  readonly bundler
+
+  # Install dependency gems using Bundler.
+  # All dependencies are managed by Bundler `Gemfile`, except Bundler itself.
+  if ! "$bundler" check > /dev/null; then
+    echo "Update gems dependencies..."
+
+    # Install or update gems.
+    "$bundler" install \
+      --gemfile "$root_dir/Gemfile" \
+      --without development || {
+      echo "Fail to bundle install." >&2
+      exit 1
+    }
+
+    # Cleanup all previous version of gems.
+    "$bundler" clean --force
+  fi
+
+  # Set gems bin path to PATH.
+  export PATH="$ruby_bin_path:$GEM_HOME/bin:$PATH"
+
+  # If this is not sourced by the other script, exec using Bundler.
+  if [[ "${BASH_SOURCE[0]}" = "$0" ]]; then
+    exec "$@"
+  fi
+}
+
+exec_with_gems "$@"
