@@ -12,7 +12,7 @@ pip install mediapipe
 
 ### Detect face mesh or hand gesture
 
-`cd mediapipe/`, then `python face-mesh.py` or `python hands.py`.
+`cd mediapipe/`, then `python face_mesh.py` or `python hands.py`.
 
 ### Use holistic model to detect and output index fingers' coordinates
 
