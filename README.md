@@ -2,11 +2,11 @@
 
 ## Dependencies
 
-[mediapipe](https://github.com/google/mediapipe), SpeechRecognition, PyAudio, portaudio.
+[mediapipe](https://github.com/google/mediapipe), SpeechRecognition, PyAudio, portaudio, tensorflow, cv2.
 
 ```sh
 brew install portaudio
-pip install mediapipe SpeechRecognition PyAudio
+pip install mediapipe SpeechRecognition PyAudio tensorflow opencv-python
 ```
 
 ## How to get started
@@ -41,6 +41,13 @@ python -m http.server
 ```
 
 Visit `localhost:8000`.
+
+### Emotion Recognition
+
+```sh
+cd emotion-recognition
+python video_realtime.py
+```
 
 ## Host the PoC webpage
 
